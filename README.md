@@ -25,6 +25,7 @@ or
     ./docker-install.sh --user <username>
 
 **Note:** you cannot run script without username
+
 **Note:** you have to run this script as root!
 
 #
@@ -52,4 +53,5 @@ or
     ./docker-install.sh --user <nazwa_użytkownika>
 
 **Note:** nie możesz uruchomić skryptu bez podania nazwy użytkownika do dodania do grupy `docker`
+
 **Note:** musisz uruchomić skrypt jako root!
