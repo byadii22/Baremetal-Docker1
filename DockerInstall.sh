@@ -17,21 +17,41 @@ function addDockerRepository
      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
      tee /etc/apt/sources.list.d/docker.list > /dev/null
-    apt-get -qq -y  update
+    apt-get -qq -y update
 }
 
 function installDocker
 {
     echo "### Install Docker..."
-    apt-get -qq -y  install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    apt-get -qq -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 }
 
-function AddUserToDockerGroup()
-{
-    local new_user_name=$1
-    echo "### User $new_user_name attaching to docker group..."
-    usermod -aG docker $new_user_name
+function AddUserToDockerGroup() {
+    local user_name=$1
+    echo "### User $user_name attaching to docker group..."
+    usermod -aG docker $user_name
 }
+
+# Parsowanie argumentów
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -u|--user) 
+            user_name="$2"
+            shift # Przesunięcie argumentu o 1
+            ;;
+        *) 
+            echo "Nieznana opcja: $1"
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+# Sprawdzenie, czy podano nazwę użytkownika
+if [[ -z "$user_name" ]]; then
+    echo "Użycie: $0 -u|--user <nazwauzytkownika>"
+    exit 1
+fi
 
 echo "### Running..."
 #########################################
@@ -40,5 +60,10 @@ echo "### Running..."
 addDockerKey
 addDockerRepository
 installDocker
+
+#########################################
+#### ADDING USER TO DOCKER GROUP PART
+#########################################
+AddUserToDockerGroup "$user_name"
 
 echo "### Done!"
